@@ -37,6 +37,12 @@ module.exports = {
     es2020: true
   },
   rules: {
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        varsIgnorePattern: '^_.*'
+      }
+    ],
     'import/order': [
       'error',
       {

@@ -3,6 +3,7 @@ import { BrowserProvider, JsonRpcSigner } from 'ethers';
 import { useEffect, useState } from 'react';
 
 import { Account } from './Account';
+import { Assets } from './Assets';
 import { checkValidNetwork } from './network';
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
       </Button>
 
       <Account signer={signer} />
+      <Assets signer={signer} />
     </Container>
   );
 }
