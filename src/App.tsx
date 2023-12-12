@@ -1,30 +1,47 @@
-import { useState } from 'react';
+import { Button, Container } from '@radix-ui/themes';
+import { BrowserProvider, JsonRpcSigner } from 'ethers';
+import { useEffect, useState } from 'react';
 
-import reactLogo from './assets/react.svg';
-import viteLogo from './assets/vite.svg';
+import { Account } from './Account';
+import { checkValidNetwork } from './network';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [provider, setProvider] = useState<BrowserProvider | undefined>();
+  const [signer, setSigner] = useState<JsonRpcSigner | undefined>();
+
+  useEffect(() => {
+    async function run() {
+      if (!window.ethereum) return;
+      const p = new BrowserProvider(window.ethereum);
+      setProvider(p);
+      const s = await p.getSigner();
+      setSigner(s);
+    }
+    run();
+  }, []);
+
+  useEffect(() => {
+    if (!provider) return;
+    checkValidNetwork(provider);
+  }, [provider]);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-    </>
+    <Container style={{ margin: '2rem' }}>
+      <Button
+        disabled={provider == null}
+        onClick={async () => {
+          if (!provider || !!signer) return;
+          const s = await provider.getSigner();
+          setSigner(s);
+        }}
+      >
+        {signer
+          ? `${signer.address.substring(0, 6)}...${signer.address.substr(-4)}`
+          : 'Connect wallet'}
+      </Button>
+
+      <Account signer={signer} />
+    </Container>
   );
 }
 
