@@ -1,9 +1,10 @@
-import { Button, Container } from '@radix-ui/themes';
+import { Button, Container, Tabs } from '@radix-ui/themes';
 import { BrowserProvider, JsonRpcSigner } from 'ethers';
 import { useEffect, useState } from 'react';
 
 import { Account } from './Account';
 import { Assets } from './Assets';
+import { Orderbook } from './Orderbook';
 import { checkValidNetwork } from './network';
 
 function App() {
@@ -41,8 +42,23 @@ function App() {
           : 'Connect wallet'}
       </Button>
 
-      <Account signer={signer} />
-      <Assets signer={signer} />
+      <Tabs.Root defaultValue="account" style={{ marginTop: '1rem' }}>
+        <Tabs.List>
+          <Tabs.Trigger value="account">Account</Tabs.Trigger>
+          <Tabs.Trigger value="assets">Assets</Tabs.Trigger>
+          <Tabs.Trigger value="orderbook">Orderbook</Tabs.Trigger>
+        </Tabs.List>
+
+        <Tabs.Content value="account">
+          <Account signer={signer} />
+        </Tabs.Content>
+        <Tabs.Content value="assets">
+          <Assets signer={signer} />
+        </Tabs.Content>
+        <Tabs.Content value="orderbook">
+          <Orderbook />
+        </Tabs.Content>
+      </Tabs.Root>
     </Container>
   );
 }

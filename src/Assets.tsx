@@ -28,7 +28,7 @@ export const Assets: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
   const { withdraw } = useWithdraw();
 
   return (
-    <Flex style={{ marginTop: '2rem' }} gap="3" align="center" justify="center" direction="column">
+    <Flex style={{ margin: '1.5rem' }} gap="3" align="center" justify="center" direction="column">
       <Heading>Assets</Heading>
       <Table.Root>
         <Table.Body>

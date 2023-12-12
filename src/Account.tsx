@@ -1,6 +1,6 @@
 import { useAccount } from '@orderly.network/hooks';
 import { AccountStatusEnum } from '@orderly.network/types';
-import { Button, Flex } from '@radix-ui/themes';
+import { Button, Flex, Heading } from '@radix-ui/themes';
 import { JsonRpcSigner } from 'ethers';
 import { FC, useEffect } from 'react';
 
@@ -20,7 +20,9 @@ export const Account: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
   }, [signer, account]);
 
   return (
-    <Flex style={{ margin: '1rem' }} gap="3" align="center" justify="center">
+    <Flex style={{ margin: '1.5rem' }} gap="3" align="center" justify="center" direction="column">
+      <Heading>Account</Heading>
+
       <Button
         disabled={state.status > AccountStatusEnum.NotSignedIn}
         onClick={() => {
