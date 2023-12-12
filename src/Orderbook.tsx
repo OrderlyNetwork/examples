@@ -14,7 +14,7 @@ export const Orderbook: FC = () => {
       <Heading>Orderbook</Heading>
 
       <Grid style={{ gap: '0 1rem', gridTemplateColumns: '6rem 6rem 10rem' }} className="table">
-        <Box>Price</Box>
+        <Box>Price (USDC)</Box>
         <Box>Quantity (ETH)</Box>
         <Box>Total (ETH)</Box>
         {data.asks?.map(([price, quantity, aggregated]) => {
