@@ -19,7 +19,7 @@ jobs:
       - name: Build
         run: |
           yarn install
-          yarn build
+          yarn build --base /sdk-workshop
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
