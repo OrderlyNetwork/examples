@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { Account } from './Account';
 import { Assets } from './Assets';
+import { CreateOrder } from './CreateOrder';
 import { Orderbook } from './Orderbook';
 import { checkValidNetwork } from './network';
 
@@ -47,6 +48,7 @@ function App() {
           <Tabs.Trigger value="account">Account</Tabs.Trigger>
           <Tabs.Trigger value="assets">Assets</Tabs.Trigger>
           <Tabs.Trigger value="orderbook">Orderbook</Tabs.Trigger>
+          <Tabs.Trigger value="create_order">Create Order</Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="account">
@@ -57,6 +59,9 @@ function App() {
         </Tabs.Content>
         <Tabs.Content value="orderbook">
           <Orderbook />
+        </Tabs.Content>
+        <Tabs.Content value="create_order">
+          <CreateOrder />
         </Tabs.Content>
       </Tabs.Root>
     </Container>

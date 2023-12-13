@@ -52,6 +52,7 @@ export const Assets: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
           <TextField.Input
             type="number"
             step="0.01"
+            min="0"
             placeholder="USDC amount"
             onChange={(event) => {
               setAmount(event.target.value);
