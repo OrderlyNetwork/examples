@@ -19,8 +19,6 @@ export const Account: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
     });
   }, [signer, account]);
 
-  console.log('state', state);
-
   return (
     <Flex style={{ margin: '1.5rem' }} gap="3" align="center" justify="center" direction="column">
       <Heading>Account</Heading>
