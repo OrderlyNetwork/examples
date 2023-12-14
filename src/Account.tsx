@@ -8,6 +8,7 @@ import { testnetChainIdHex } from './network';
 
 export const Account: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
   const { account, state } = useAccount();
+  console.log('state', state);
 
   useEffect(() => {
     if (!signer) return;
@@ -61,7 +62,7 @@ export const Account: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
       </Card>
 
       <Button
-        disabled={state.status !== AccountStatusEnum.Connected}
+        disabled={state.status !== AccountStatusEnum.NotSignedIn}
         onClick={() => {
           account.createAccount();
         }}
