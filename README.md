@@ -11,3 +11,4 @@ To have IDE support it is recommended to open the specific subfolder you want to
 ## API
 
 - [TypeScript](./api/ts/)
+- [Python](./api/py/)
