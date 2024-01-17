@@ -16,8 +16,3 @@ yarn dev
 
 # navigate to http://localhost:5173/
 ```
-
-## Read our docs
-
-- [SDK](https://sdk.orderly.network/)
-- [Developer documentation](https://orderly.network/docs)

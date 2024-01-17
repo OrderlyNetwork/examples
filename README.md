@@ -13,3 +13,8 @@ To have IDE support it is recommended to open the specific subfolder you want to
 - [TypeScript](./api/ts/)
 - [Python](./api/py/)
 - [Java](./api/java/)
+
+## Read our docs
+
+- [SDK](https://sdk.orderly.network/)
+- [Developer documentation](https://orderly.network/docs)
