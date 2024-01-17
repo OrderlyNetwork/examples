@@ -72,7 +72,7 @@ export const Assets: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
             }
           }}
         >
-          Deposit
+          {Number(deposit.allowance) < Number(amount) ? 'Approve' : 'Deposit'}
         </Button>
 
         <Button

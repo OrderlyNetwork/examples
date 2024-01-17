@@ -8,7 +8,6 @@ import { testnetChainIdHex } from './network';
 
 export const Account: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
   const { account, state } = useAccount();
-  console.log('state', state);
 
   useEffect(() => {
     if (!signer) return;

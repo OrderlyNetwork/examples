@@ -7,6 +7,7 @@ import { Assets } from './Assets';
 import { CreateOrder } from './CreateOrder';
 import { Orderbook } from './Orderbook';
 import { Orders } from './Orders';
+import { Positions } from './Positions';
 import { checkValidNetwork } from './network';
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
           <Tabs.Trigger value="orderbook">Orderbook</Tabs.Trigger>
           <Tabs.Trigger value="create_order">Create Order</Tabs.Trigger>
           <Tabs.Trigger value="orders">Orders</Tabs.Trigger>
+          <Tabs.Trigger value="positions">Positions</Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="account">
@@ -67,6 +69,9 @@ function App() {
         </Tabs.Content>
         <Tabs.Content value="orders">
           <Orders />
+        </Tabs.Content>
+        <Tabs.Content value="positions">
+          <Positions />
         </Tabs.Content>
       </Tabs.Root>
     </Container>

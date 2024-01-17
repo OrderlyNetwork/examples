@@ -1,7 +1,8 @@
 import { BrowserProvider } from 'ethers';
 
-export const testnetChainId = '421613';
-export const testnetChainIdHex = '0x66eed';
+// Arbitrum Sepolia
+export const testnetChainId = '421614';
+export const testnetChainIdHex = '0x66eee';
 
 export async function checkValidNetwork(provider: BrowserProvider) {
   const signer = await provider.getSigner();
