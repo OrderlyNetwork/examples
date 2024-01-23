@@ -4,7 +4,13 @@ import math
 import os
 import requests
 
+from base58 import b58encode
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from eth_account import Account, messages
+
+
+def encode_key(key: bytes):
+    return "ed25519:%s" % b58encode(key).decode("utf-8")
 
 
 MESSAGE_TYPES = {
@@ -58,38 +64,36 @@ chain_id = 421614
 
 account: Account = Account.from_key(os.environ.get("PRIVATE_KEY"))
 
-res = requests.get("%s/v1/registration_nonce" % base_url)
-response = json.loads(res.text)
-registration_nonce = response["data"]["registration_nonce"]
+orderly_key = Ed25519PrivateKey.generate()
 
 d = datetime.utcnow()
 epoch = datetime(1970, 1, 1)
 timestamp = math.trunc((d - epoch).total_seconds() * 1_000)
 
-register_message = {
+add_key_message = {
     "brokerId": broker_id,
     "chainId": chain_id,
+    "orderlyKey": encode_key(orderly_key.public_key().public_bytes_raw()),
+    "scope": "read,trading",
     "timestamp": timestamp,
-    "registrationNonce": registration_nonce,
+    "expiration": timestamp + 1_000 * 60 * 60 * 24 * 365,  # 1 year
 }
 
 encoded_data = messages.encode_typed_data(
     domain_data=OFF_CHAIN_DOMAIN,
-    message_types={"Registration": MESSAGE_TYPES["Registration"]},
-    message_data=register_message,
+    message_types={"AddOrderlyKey": MESSAGE_TYPES["AddOrderlyKey"]},
+    message_data=add_key_message,
 )
 signed_message = account.sign_message(encoded_data)
 
 res = requests.post(
-    "%s/v1/register_account" % base_url,
+    "%s/v1/orderly_key" % base_url,
     headers={"Content-Type": "application/json"},
     json={
-        "message": register_message,
+        "message": add_key_message,
         "signature": signed_message.signature.hex(),
         "userAddress": account.address,
     },
 )
 response = json.loads(res.text)
-
-orderly_account_id = response["data"]["account_id"]
-print("orderly_account_id:", orderly_account_id)
+print("add_access_key:", response)

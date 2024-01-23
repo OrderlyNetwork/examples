@@ -1,5 +1,6 @@
 package org.web3j;
 
+import java.security.*;
 import java.time.Instant;
 
 import org.apache.commons.codec.binary.Hex;
@@ -8,13 +9,15 @@ import org.web3j.crypto.*;
 import org.web3j.utils.Numeric;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import net.i2p.crypto.eddsa.EdDSAPrivateKey;
+import net.i2p.crypto.eddsa.KeyPairGenerator;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class RegisterExample {
+public class OrderlyKeyExample {
    public static JSONObject MESSAGE_TYPES = new JSONObject("""
          {
             "EIP712Domain": [
@@ -72,48 +75,41 @@ public class RegisterExample {
       Credentials credentials = Credentials.create(ECKeyPair.create(Hex.decodeHex(pk)));
       OkHttpClient client = new OkHttpClient();
 
-      Request nonceReq = new Request.Builder()
-            .url(baseUrl + "/v1/registration_nonce")
-            .build();
-      String nonceRes;
-      try (Response response = client.newCall(nonceReq).execute()) {
-         nonceRes = response.body().string();
-      }
-      JSONObject nonceObj = new JSONObject(nonceRes);
+      KeyPairGenerator keyGen = new KeyPairGenerator();
+      KeyPair keyPair = keyGen.generateKeyPair();
+      String orderlyKey = Util.encodePublicKey((EdDSAPrivateKey) keyPair.getPrivate());
 
-      String registrationNonce = nonceObj.getJSONObject("data").getString("registration_nonce");
-
-      JSONObject registerMessage = new JSONObject();
-      registerMessage.put("brokerId", brokerId);
-      registerMessage.put("chainId", chainId);
-      registerMessage.put("timestamp", Instant.now().toEpochMilli());
-      registerMessage.put("registrationNonce", registrationNonce);
+      JSONObject addKeyMessage = new JSONObject();
+      long timestamp = Instant.now().toEpochMilli();
+      addKeyMessage.put("brokerId", brokerId);
+      addKeyMessage.put("chainId", chainId);
+      addKeyMessage.put("scope", "read,trading");
+      addKeyMessage.put("orderlyKey", orderlyKey);
+      addKeyMessage.put("timestamp", timestamp);
+      addKeyMessage.put("expiration", timestamp + 1_000 * 60 * 60 * 24 * 365); // 1 year
 
       JSONObject jsonObject = new JSONObject();
       jsonObject.put("types", RegisterExample.MESSAGE_TYPES);
-      jsonObject.put("primaryType", "Registration");
+      jsonObject.put("primaryType", "AddOrderlyKey");
       jsonObject.put("domain", RegisterExample.OFF_CHAIN_DOMAIN);
-      jsonObject.put("message", registerMessage);
+      jsonObject.put("message", addKeyMessage);
 
       Sign.SignatureData signature = Sign.signTypedData(jsonObject.toString(), credentials.getEcKeyPair());
 
       JSONObject jsonBody = new JSONObject();
-      jsonBody.put("message", registerMessage);
-      jsonBody.put("signature", RegisterExample.signatureToHashString(signature));
+      jsonBody.put("message", addKeyMessage);
+      jsonBody.put("signature", Util.signatureToHashString(signature));
       jsonBody.put("userAddress", credentials.getAddress());
       RequestBody body = RequestBody.create(jsonBody.toString(), MediaType.get("application/json"));
-      Request registerReq = new Request.Builder()
-            .url(baseUrl + "/v1/register_account")
+      Request addKeyReq = new Request.Builder()
+            .url(baseUrl + "/v1/orderly_key")
             .post(body)
             .build();
-      String registerRes;
-      try (Response response = client.newCall(registerReq).execute()) {
-         registerRes = response.body().string();
+      String addKeyRes;
+      try (Response response = client.newCall(addKeyReq).execute()) {
+         addKeyRes = response.body().string();
       }
-      JSONObject registerObj = new JSONObject(registerRes);
-
-      String orderlyAccountId = registerObj.getJSONObject("data").getString("account_id");
-      System.out.println("orderlyAccountId: " + orderlyAccountId);
+      System.out.println("orderly_key response: " + addKeyRes);
    }
 
    public static String signatureToHashString(Sign.SignatureData signature) {

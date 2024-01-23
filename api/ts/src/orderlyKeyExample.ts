@@ -1,5 +1,11 @@
+import { getPublicKeyAsync, utils } from '@noble/ed25519';
 import { config } from 'dotenv';
-import { ethers } from 'ethers';
+import { encodeBase58, ethers } from 'ethers';
+import { webcrypto } from 'node:crypto';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+if (!globalThis.crypto) globalThis.crypto = webcrypto;
 
 const MESSAGE_TYPES = {
   EIP712Domain: [
@@ -52,45 +58,42 @@ const CHAIN_ID = 421614;
 
 config();
 
-async function registerAccount(): Promise<void> {
+async function createOrderlyKey(): Promise<void> {
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!);
 
-  const nonceRes = await fetch(`${BASE_URL}/v1/registration_nonce`);
-  const nonceJson = await nonceRes.json();
-  const registrationNonce = nonceJson.data.registration_nonce as string;
-
-  const registerMessage = {
+  const privateKey = utils.randomPrivateKey();
+  const orderlyKey = `ed25519:${encodeBase58(await getPublicKeyAsync(privateKey))}`;
+  const timestamp = Date.now();
+  const addKeyMessage = {
     brokerId: BROKER_ID,
     chainId: CHAIN_ID,
-    timestamp: Date.now(),
-    registrationNonce
+    orderlyKey,
+    scope: 'read,trading',
+    timestamp,
+    expiration: timestamp + 1_000 * 60 * 60 * 24 * 365 // 1 year
   };
 
   const signature = await wallet.signTypedData(
     OFF_CHAIN_DOMAIN,
     {
-      Registration: MESSAGE_TYPES.Registration
+      AddOrderlyKey: MESSAGE_TYPES.AddOrderlyKey
     },
-    registerMessage
+    addKeyMessage
   );
 
-  const registerRes = await fetch(`${BASE_URL}/v1/register_account`, {
+  const keyRes = await fetch(`${BASE_URL}/v1/orderly_key`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      message: registerMessage,
+      message: addKeyMessage,
       signature,
       userAddress: await wallet.getAddress()
     })
   });
-  const registerJson = await registerRes.json();
-  if (!registerJson.success) {
-    throw new Error(registerJson.message);
-  }
-  const orderlyAccountId = registerJson.data.account_id;
-  console.log('orderlyAccountId', orderlyAccountId);
+  const keyJson = await keyRes.json();
+  console.log('addAccessKey', keyJson);
 }
 
-registerAccount();
+createOrderlyKey();

@@ -3,7 +3,7 @@ class Config(object):
         self,
         base_url="https://testnet-api-evm.orderly.org",
         broker_id="woofi_dex",
-        chain_id=421613,
+        chain_id=421614,
     ) -> None:
         self.base_url = base_url
         self.broker_id = broker_id

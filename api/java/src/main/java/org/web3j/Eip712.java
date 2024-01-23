@@ -46,7 +46,7 @@ public abstract class Eip712 {
          {
             "name": "Orderly",
             "version": "1",
-            "chainId": 421613,
+            "chainId": 421614,
             "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
          }""");
 
@@ -54,7 +54,7 @@ public abstract class Eip712 {
          {
             "name": "Orderly",
             "version": "1",
-            "chainId": 421613,
+            "chainId": 421614,
             "verifyingContract": "0x1826B75e2ef249173FC735149AE4B8e9ea10abff",
          }""");
 }

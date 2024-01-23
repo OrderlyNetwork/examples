@@ -12,6 +12,6 @@ public class Config {
    }
 
    public static Config testnet() {
-      return new Config("https://testnet-api-evm.orderly.org", "woofi_dex", 421613);
+      return new Config("https://testnet-api-evm.orderly.org", "woofi_dex", 421614);
    }
 }
