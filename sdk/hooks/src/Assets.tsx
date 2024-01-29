@@ -1,4 +1,10 @@
-import { useChains, useCollateral, useDeposit, useWithdraw } from '@orderly.network/hooks';
+import {
+  useAccount,
+  useChains,
+  useCollateral,
+  useDeposit,
+  useWithdraw
+} from '@orderly.network/hooks';
 import { API } from '@orderly.network/types';
 import { Button, Flex, Grid, Heading, Table, TextField } from '@radix-ui/themes';
 import { JsonRpcSigner } from 'ethers';
@@ -7,6 +13,7 @@ import { FC, useMemo, useState } from 'react';
 import { testnetChainId } from './network';
 
 export const Assets: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
+  const { account } = useAccount();
   const collateral = useCollateral();
   const [chains] = useChains('testnet', {
     filter: (item: API.Chain) => item.network_infos?.chain_id === Number(testnetChainId)
@@ -25,7 +32,7 @@ export const Assets: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
     srcChainId: Number(testnetChainId),
     depositorAddress: signer?.address
   });
-  const { withdraw } = useWithdraw();
+  const { withdraw, unsettledPnL } = useWithdraw();
 
   return (
     <Flex style={{ margin: '1.5rem' }} gap="3" align="center" justify="center" direction="column">
@@ -40,13 +47,19 @@ export const Assets: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
             <Table.RowHeaderCell>Deposit Balance:</Table.RowHeaderCell>
             <Table.Cell>{collateral.availableBalance}</Table.Cell>
           </Table.Row>
+          <Table.Row>
+            <Table.RowHeaderCell>Unsettled PnL:</Table.RowHeaderCell>
+            <Table.Cell>{unsettledPnL}</Table.Cell>
+          </Table.Row>
         </Table.Body>
       </Table.Root>
       <Grid
         columns="2"
-        rows="2"
+        rows="4"
         gap="1"
-        style={{ gridTemplateAreas: `'input input' 'deposit withdraw' 'mint mint'` }}
+        style={{
+          gridTemplateAreas: `'input input' 'deposit withdraw' 'mint mint' 'settlepnl settlepnl'`
+        }}
       >
         <TextField.Root style={{ gridArea: 'input' }}>
           <TextField.Input
@@ -83,7 +96,8 @@ export const Assets: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
             await withdraw({
               chainId: Number(testnetChainId),
               amount: Number(amount),
-              token: 'USDC'
+              token: 'USDC',
+              allowCrossChainWithdraw: false
             });
           }}
         >
@@ -109,6 +123,16 @@ export const Assets: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
           }}
         >
           Mint 1k USDC
+        </Button>
+
+        <Button
+          style={{ gridArea: 'settlepnl' }}
+          disabled={signer == null && unsettledPnL > 0}
+          onClick={async () => {
+            await account.settle();
+          }}
+        >
+          Settle PnL
         </Button>
       </Grid>
     </Flex>
