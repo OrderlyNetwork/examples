@@ -2,11 +2,31 @@ import { useAccount } from '@orderly.network/hooks';
 import { AccountStatusEnum } from '@orderly.network/types';
 import { Button, Card, Container, Flex, Heading, Text } from '@radix-ui/themes';
 import { JsonRpcSigner } from 'ethers';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 
+import {
+  DelegateSignerResponse,
+  announceDelegateSigner,
+  delegateAddOrderlyKey,
+  registerDelegateSigner
+} from './helpers/delegateSigner';
 import { testnetChainIdHex } from './network';
 
-export const Account: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
+export const Account: FC<{
+  signer?: JsonRpcSigner;
+  delegateSignerEnabled: boolean;
+  delegateSigner?: DelegateSignerResponse;
+  setDelegateSigner: React.Dispatch<React.SetStateAction<DelegateSignerResponse | undefined>>;
+  setDelegateOrderlyKey: React.Dispatch<React.SetStateAction<string | undefined>>;
+}> = ({
+  signer,
+  delegateSignerEnabled,
+  delegateSigner,
+  setDelegateSigner,
+  setDelegateOrderlyKey
+}) => {
+  const [txHash, setTxHash] = useState<string | undefined>();
+
   const { account, state } = useAccount();
 
   useEffect(() => {
@@ -60,25 +80,57 @@ export const Account: FC<{ signer?: JsonRpcSigner }> = ({ signer }) => {
         )}
       </Card>
 
+      {delegateSignerEnabled && (
+        <>
+          <Button
+            disabled={!signer || !account.address}
+            onClick={async () => {
+              if (!signer || !account.address) return;
+              const hash = await registerDelegateSigner(signer, account.address);
+              setTxHash(hash);
+            }}
+          >
+            Register Delegate Signer
+          </Button>
+        </>
+      )}
+
       <Button
-        disabled={state.status !== AccountStatusEnum.NotSignedIn}
-        onClick={() => {
-          account.createAccount();
+        disabled={
+          delegateSignerEnabled
+            ? !account.wallet || !account.address || !txHash
+            : state.status !== AccountStatusEnum.NotSignedIn
+        }
+        onClick={async () => {
+          if (delegateSignerEnabled) {
+            if (!account.wallet || !account.address || !txHash) return;
+            const res = await announceDelegateSigner(account, txHash);
+            setDelegateSigner(res);
+          } else {
+            await account.createAccount();
+          }
         }}
       >
-        Create Account
+        {delegateSignerEnabled ? 'Announce Delegate Signer' : 'Create Account'}
       </Button>
 
       <Button
         disabled={
-          state.status > AccountStatusEnum.DisabledTrading ||
-          state.status === AccountStatusEnum.NotConnected
+          delegateSignerEnabled
+            ? delegateSigner == null
+            : state.status > AccountStatusEnum.DisabledTrading ||
+              state.status === AccountStatusEnum.NotConnected
         }
-        onClick={() => {
-          account.createOrderlyKey(30);
+        onClick={async () => {
+          if (delegateSignerEnabled) {
+            const key = await delegateAddOrderlyKey(account);
+            setDelegateOrderlyKey(key);
+          } else {
+            await account.createOrderlyKey(30);
+          }
         }}
       >
-        Create Orderly Key
+        {delegateSignerEnabled ? 'Create Delegate Orderly Key' : 'Create Orderly Key'}
       </Button>
     </Flex>
   );

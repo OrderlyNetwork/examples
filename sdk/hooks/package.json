@@ -7,11 +7,13 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
+    "typegen": "typechain --target=ethers-v6 --input-dir ./src/abi --out-dir ./src/abi",
     "lint": "prettier --check . && eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0",
     "format": "prettier --write . && yarn eslint --fix ."
   },
   "dependencies": {
-    "@orderly.network/hooks": "^1.0.29",
+    "@noble/ed25519": "^2.0.0",
+    "@orderly.network/hooks": "1.0.28-alpha.26",
     "@orderly.network/types": "^0.1.28",
     "@radix-ui/themes": "^2.0.2",
     "axios": "^1.6.2",
@@ -20,6 +22,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@typechain/ethers-v6": "^0.5.1",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
@@ -33,6 +36,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
     "prettier": "^3.1.1",
+    "typechain": "^8.3.2",
     "typescript": "^5.2.2",
     "vite": "^5.0.0"
   }
