@@ -51,7 +51,7 @@ export const Orders: FC = () => {
                   ) && (
                     <Button
                       onClick={async () => {
-                        await cancelOrder(String(order_id), 'PERP_ETH_USDC');
+                        await cancelOrder(order_id, 'PERP_ETH_USDC');
                       }}
                     >
                       Cancel
