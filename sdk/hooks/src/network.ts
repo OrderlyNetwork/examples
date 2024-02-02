@@ -10,25 +10,25 @@ export async function checkValidNetwork(provider: BrowserProvider) {
   const chainId = network.chainId.toString();
 
   if (chainId !== testnetChainId) {
-    await addArbitrumGoerliNetwork();
+    await addArbitrumSepoliaNetwork();
   }
 }
 
-export function addArbitrumGoerliNetwork(): Promise<unknown> {
+export function addArbitrumSepoliaNetwork(): Promise<unknown> {
   if (!window.ethereum) return Promise.resolve();
   return window.ethereum.request({
     method: 'wallet_addEthereumChain',
     params: [
       {
         chainId: testnetChainIdHex,
-        rpcUrls: ['https://arbitrum-goerli.publicnode.com'],
-        chainName: 'Arbitrum Goerli',
+        rpcUrls: ['https://arbitrum-sepolia.publicnode.com'],
+        chainName: 'Arbitrum Sepolia',
         nativeCurrency: {
           name: 'ETH',
           symbol: 'ETH',
           decimals: 18
         },
-        blockExplorerUrls: ['https://goerli.arbiscan.io/']
+        blockExplorerUrls: ['https://sepolia.arbiscan.io/']
       }
     ]
   });

@@ -12,10 +12,12 @@ const MESSAGE_TYPES = {
     { name: 'verifyingContract', type: 'address' }
   ],
   DelegateSigner: [
+    { name: 'delegateContract', type: 'address' },
     { name: 'brokerId', type: 'string' },
     { name: 'chainId', type: 'uint256' },
     { name: 'timestamp', type: 'uint64' },
-    { name: 'registrationNonce', type: 'uint256' }
+    { name: 'registrationNonce', type: 'uint256' },
+    { name: 'txHash', type: 'bytes32' }
   ],
   DelegateAddOrderlyKey: [
     { name: 'delegateContract', type: 'address' },
@@ -97,7 +99,7 @@ export async function announceDelegateSigner(
     brokerId: BROKER_ID,
     chainId: CHAIN_ID,
     timestamp: Date.now(),
-    registrationNonce,
+    registrationNonce: Number(registrationNonce),
     txHash
   };
 
@@ -107,6 +109,13 @@ export async function announceDelegateSigner(
     primaryType: 'DelegateSigner',
     types: MESSAGE_TYPES
   };
+  console.log('delegateSignerMessage', delegateSignerMessage);
+  //   {
+  //     "brokerId": "woofi_dex",
+  //     "chainId": 421614,
+  //     "timestamp": 1706876851044,
+  //     "registrationNonce": 186711792201
+  //  }
 
   const signature = await account.signTypedData(toSignatureMessage);
 
@@ -133,6 +142,7 @@ export async function delegateAddOrderlyKey(account: Account): Promise<string> {
   const orderlyKey = `ed25519:${encodeBase58(await getPublicKeyAsync(privateKey))}`;
   const timestamp = Date.now();
   const addKeyMessage = {
+    delegateContract,
     brokerId: BROKER_ID,
     chainId: CHAIN_ID,
     orderlyKey,

@@ -1,6 +1,6 @@
 import { useAccount } from '@orderly.network/hooks';
 import { AccountStatusEnum } from '@orderly.network/types';
-import { Button, Card, Container, Flex, Heading, Text } from '@radix-ui/themes';
+import { Button, Callout, Card, Container, Flex, Heading, Text } from '@radix-ui/themes';
 import { JsonRpcSigner } from 'ethers';
 import { FC, useEffect, useState } from 'react';
 
@@ -79,6 +79,14 @@ export const Account: FC<{
           </Text>
         )}
       </Card>
+
+      {delegateSignerEnabled && (
+        <Callout.Root>
+          <Callout.Text>
+            Delegate Signer information is not persisted on successive page visits
+          </Callout.Text>
+        </Callout.Root>
+      )}
 
       {delegateSignerEnabled && (
         <>
