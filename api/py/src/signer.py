@@ -27,8 +27,11 @@ class Signer(object):
         if req.json is not None:
             json_str = json.dumps(req.json)
 
-        path = urllib.parse.urlparse(req.url).path
-        message = str(timestamp) + req.method + path + json_str
+        url = urllib.parse.urlparse(req.url)
+        message = str(timestamp) + req.method + url.path + json_str
+        if len(url.query) > 0:
+            message += "?" + url.query
+
         orderly_signature = urlsafe_b64encode(
             self._key_pair.sign(message.encode())
         ).decode("utf-8")

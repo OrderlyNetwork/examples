@@ -11,7 +11,7 @@ export async function signAndSendRequest(
   const encoder = new TextEncoder();
 
   const url = new URL(input);
-  let message = `${String(timestamp)}${init?.method ?? 'GET'}${url.pathname}`;
+  let message = `${String(timestamp)}${init?.method ?? 'GET'}${url.pathname}${url.search}`;
   if (init?.body) {
     message += init.body;
   }
