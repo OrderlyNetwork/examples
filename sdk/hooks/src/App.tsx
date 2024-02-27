@@ -1,4 +1,4 @@
-import { Button, Container, Flex, Switch, Tabs } from '@radix-ui/themes';
+import { Button, Container, Flex, Tabs } from '@radix-ui/themes';
 import { BrowserProvider, JsonRpcSigner } from 'ethers';
 import { useEffect, useState } from 'react';
 
@@ -9,17 +9,11 @@ import { Orderbook } from './Orderbook';
 import { Orders } from './Orders';
 import { Positions } from './Positions';
 import { Trades } from './Trades';
-import { DelegateSignerResponse } from './helpers/delegateSigner';
 import { checkValidNetwork } from './network';
 
 function App() {
   const [provider, setProvider] = useState<BrowserProvider | undefined>();
   const [signer, setSigner] = useState<JsonRpcSigner | undefined>();
-  const [delegateSignerEnabled, setDelegateSignerEnabled] = useState<boolean>(false);
-  const [delegateSigner, setDelegateSigner] = useState<DelegateSignerResponse>();
-  const [_delegateOrderlyKey, setDelegateOrderlyKey] = useState<string>();
-
-  console.log('delegateSigner', delegateSigner);
 
   useEffect(() => {
     async function run() {
@@ -59,14 +53,6 @@ function App() {
             ? `${signer.address.substring(0, 6)}...${signer.address.substr(-4)}`
             : 'Connect wallet'}
         </Button>
-        <Flex gap="1">
-          <Switch
-            onCheckedChange={(checked) => {
-              setDelegateSignerEnabled(checked);
-            }}
-          />
-          Delegate Signer mode
-        </Flex>
       </Flex>
 
       <Tabs.Root defaultValue="account" style={{ marginTop: '1rem' }}>
@@ -81,20 +67,10 @@ function App() {
         </Tabs.List>
 
         <Tabs.Content value="account">
-          <Account
-            signer={signer}
-            delegateSignerEnabled={delegateSignerEnabled}
-            delegateSigner={delegateSigner}
-            setDelegateSigner={setDelegateSigner}
-            setDelegateOrderlyKey={setDelegateOrderlyKey}
-          />
+          <Account signer={signer} />
         </Tabs.Content>
         <Tabs.Content value="assets">
-          <Assets
-            signer={signer}
-            delegateSignerEnabled={delegateSignerEnabled}
-            delegateSigner={delegateSigner}
-          />
+          <Assets signer={signer} />
         </Tabs.Content>
         <Tabs.Content value="orderbook">
           <Orderbook />
