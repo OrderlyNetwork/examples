@@ -98,7 +98,7 @@ export const Assets: FC<{
             if (amount == null) return;
             await withdraw({
               chainId: Number(testnetChainId),
-              amount: Number(amount),
+              amount,
               token: 'USDC',
               allowCrossChainWithdraw: false
             });
