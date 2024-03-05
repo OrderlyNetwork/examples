@@ -43,10 +43,10 @@ public class Signer {
    public Request createSignedRequest(String url, String method, JSONObject json)
          throws OrderlyClientException, InvalidKeyException, SignatureException, UnsupportedEncodingException {
       checkIsInitialized();
-      if (method == "GET") {
-         return createSignedGetRequest(url);
-      } else if (method == "POST" && json != null) {
-         return createSignedPostRequest(url, json);
+      if (method == "GET" || method == "DELETE") {
+         return createSignedFormRequest(url, method);
+      } else if ((method == "POST" || method == "PUT") && json != null) {
+         return createSignedJsonRequest(url, method, json);
       } else {
          throw new IllegalArgumentException();
       }
@@ -61,10 +61,10 @@ public class Signer {
       }
    }
 
-   private Request createSignedGetRequest(String url)
+   private Request createSignedFormRequest(String url, String method)
          throws SignatureException, UnsupportedEncodingException, InvalidKeyException {
       long timestamp = Instant.now().toEpochMilli();
-      String message = "" + timestamp + "GET" + url;
+      String message = "" + timestamp + method + url;
 
       EdDSAEngine signature = new EdDSAEngine();
       signature.initSign(privateKey);
@@ -81,12 +81,12 @@ public class Signer {
             .build();
    }
 
-   private Request createSignedPostRequest(String url, JSONObject json)
+   private Request createSignedJsonRequest(String url, String method, JSONObject json)
          throws SignatureException, UnsupportedEncodingException, InvalidKeyException {
       RequestBody body = RequestBody.create(json.toString(), MediaType.parse("application/json"));
 
       long timestamp = Instant.now().toEpochMilli();
-      String message = "" + timestamp + "POST" + url + json.toString();
+      String message = "" + timestamp + method + url + json.toString();
 
       EdDSAEngine signature = new EdDSAEngine();
       signature.initSign(privateKey);

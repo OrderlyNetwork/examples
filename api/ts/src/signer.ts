@@ -20,7 +20,9 @@ export async function signAndSendRequest(
   return fetch(input, {
     headers: {
       'Content-Type':
-        init?.method !== 'GET' ? 'application/json' : 'application/x-www-form-urlencoded',
+        init?.method !== 'GET' && init?.method !== 'DELETE'
+          ? 'application/json'
+          : 'application/x-www-form-urlencoded',
       'orderly-timestamp': String(timestamp),
       'orderly-account-id': orderlyAccountId,
       'orderly-key': `ed25519:${encodeBase58(await getPublicKeyAsync(privateKey))}`,

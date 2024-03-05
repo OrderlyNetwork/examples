@@ -41,9 +41,9 @@ class Signer(object):
             "orderly-signature": orderly_signature,
         }
         print(req.headers)
-        if req.method == "GET":
+        if req.method == "GET" or req.method == "DELETE":
             req.headers["Content-Type"] = "application/x-www-form-urlencoded"
-        elif req.method == "POST":
+        elif req.method == "POST" or re.method == "PUT":
             req.headers["Content-Type"] = "application/json"
 
         return req.prepare()
