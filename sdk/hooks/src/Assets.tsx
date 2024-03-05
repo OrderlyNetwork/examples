@@ -119,7 +119,7 @@ export const Assets: FC<{
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                broker_id: 'woofi_dex',
+                broker_id: 'woofi_pro',
                 chain_id: testnetChainId,
                 user_address
               })

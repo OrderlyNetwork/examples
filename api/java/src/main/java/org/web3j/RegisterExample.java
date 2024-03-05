@@ -41,7 +41,7 @@ public class RegisterExample {
 
    public static void main(String[] args) throws Exception {
       String baseUrl = "https://testnet-api-evm.orderly.org";
-      String brokerId = "woofi_dex";
+      String brokerId = "woofi_pro";
       int chainId = 421614;
 
       Dotenv dotenv = Dotenv.load();

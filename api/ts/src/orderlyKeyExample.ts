@@ -32,7 +32,7 @@ const OFF_CHAIN_DOMAIN = {
 };
 
 const BASE_URL = 'https://testnet-api-evm.orderly.org';
-const BROKER_ID = 'woofi_dex';
+const BROKER_ID = 'woofi_pro';
 const CHAIN_ID = 421614;
 
 config();

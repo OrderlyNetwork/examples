@@ -11,7 +11,7 @@ import '@radix-ui/themes/styles.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Theme>
-      <OrderlyConfigProvider networkId="testnet" brokerId="woofi_dex">
+      <OrderlyConfigProvider networkId="testnet" brokerId="woofi_pro">
         <App />
       </OrderlyConfigProvider>
     </Theme>

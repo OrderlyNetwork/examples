@@ -30,7 +30,7 @@ OFF_CHAIN_DOMAIN = {
 }
 
 base_url = "https://testnet-api-evm.orderly.org"
-broker_id = "woofi_dex"
+broker_id = "woofi_pro"
 chain_id = 421614
 
 account: Account = Account.from_key(os.environ.get("PRIVATE_KEY"))

@@ -4,7 +4,7 @@ import { ethers, keccak256 } from 'ethers';
 import { Vault__factory, NativeUSDC__factory } from './abi';
 import type { VaultTypes } from './abi/Vault';
 
-const brokerId = 'woofi_dex';
+const brokerId = 'woofi_pro';
 const tokenId = 'USDC';
 const orderlyAccountId = '0x...';
 
