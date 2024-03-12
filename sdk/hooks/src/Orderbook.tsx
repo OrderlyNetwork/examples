@@ -18,38 +18,42 @@ export const Orderbook: FC = () => {
           <Box>Price (USDC)</Box>
           <Box>Quantity (ETH)</Box>
           <Box>Total (ETH)</Box>
-          {data.asks?.map(([price, quantity, aggregated]) => {
-            const gradient = (100 * aggregated) / data.asks[0][2];
-            return (
-              <>
-                <Box className="ask">{price}</Box>
-                <Box>{quantity}</Box>
-                <Box
-                  style={{
-                    background: `linear-gradient(to left, rgba(161, 6, 6, 0.2) ${gradient}%, transparent ${gradient}%)`
-                  }}
-                >
-                  {aggregated}
-                </Box>
-              </>
-            );
-          })}
-          {data.bids?.map(([price, quantity, aggregated]) => {
-            const gradient = (100 * aggregated) / data.bids[data.bids.length - 1][2];
-            return (
-              <>
-                <Box className="bid">{price}</Box>
-                <Box>{quantity}</Box>
-                <Box
-                  style={{
-                    background: `linear-gradient(to left, rgba(4, 109, 4, 0.2) ${gradient}%, transparent ${gradient}%)`
-                  }}
-                >
-                  {aggregated}
-                </Box>
-              </>
-            );
-          })}
+          {data.asks
+            ?.filter(([price]) => !Number.isNaN(price))
+            .map(([price, quantity, aggregated]) => {
+              const gradient = (100 * aggregated) / data.asks[0][2];
+              return (
+                <>
+                  <Box className="ask">{price}</Box>
+                  <Box>{quantity}</Box>
+                  <Box
+                    style={{
+                      background: `linear-gradient(to left, rgba(161, 6, 6, 0.2) ${gradient}%, transparent ${gradient}%)`
+                    }}
+                  >
+                    {aggregated}
+                  </Box>
+                </>
+              );
+            })}
+          {data.bids
+            ?.filter(([price]) => !Number.isNaN(price))
+            .map(([price, quantity, aggregated]) => {
+              const gradient = (100 * aggregated) / data.bids[data.bids.length - 1][2];
+              return (
+                <>
+                  <Box className="bid">{price}</Box>
+                  <Box>{quantity}</Box>
+                  <Box
+                    style={{
+                      background: `linear-gradient(to left, rgba(4, 109, 4, 0.2) ${gradient}%, transparent ${gradient}%)`
+                    }}
+                  >
+                    {aggregated}
+                  </Box>
+                </>
+              );
+            })}
         </Grid>
       )}
     </Flex>
