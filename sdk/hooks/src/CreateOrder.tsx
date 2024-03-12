@@ -4,7 +4,14 @@ import { Button, Flex, Heading, Select, TextField } from '@radix-ui/themes';
 import { FC } from 'react';
 
 export const CreateOrder: FC = () => {
-  const { onSubmit } = useOrderEntry('PERP_ETH_USDC', OrderSide.BUY, false);
+  const { onSubmit } = useOrderEntry(
+    {
+      symbol: 'PERP_ETH_USDC',
+      side: OrderSide.BUY,
+      order_type: OrderType.MARKET
+    },
+    { watchOrderbook: true }
+  );
 
   const onFormSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();

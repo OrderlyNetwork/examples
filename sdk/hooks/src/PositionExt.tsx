@@ -11,7 +11,15 @@ export const PositionExt: FC<{ position: PositionExtFixed; refresh: () => void }
 }) => {
   const { timestamp, average_open_price, notional, position_qty, unrealized_pnl } = position;
   const side = position_qty < 0 ? OrderSide.BUY : OrderSide.SELL;
-  const { onSubmit, maxQty } = useOrderEntry('PERP_ETH_USDC', side, true);
+  const { onSubmit, maxQty } = useOrderEntry(
+    {
+      symbol: 'PERP_ETH_USDC',
+      side,
+      order_type: OrderType.MARKET,
+      reduce_only: true
+    },
+    { watchOrderbook: true }
+  );
 
   const formatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 3 });
 

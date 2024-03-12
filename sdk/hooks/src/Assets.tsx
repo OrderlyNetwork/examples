@@ -31,8 +31,7 @@ export const Assets: FC<{
     address: token?.address,
     decimals: token?.decimals,
     srcToken: token?.symbol,
-    srcChainId: Number(testnetChainId),
-    depositorAddress: signer?.address
+    srcChainId: Number(testnetChainId)
   });
   const { withdraw, unsettledPnL } = useWithdraw();
 
