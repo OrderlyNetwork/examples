@@ -1,23 +1,44 @@
-import { getPublicKeyAsync, signAsync } from '@noble/ed25519';
-import { encodeBase58 } from 'ethers';
+import { API } from '@orderly.network/types';
 
 import { BASE_URL } from './config';
+import { signAndSendRequest } from './signer';
 
-export async function getClientHolding(orderlyAccountId: string, privateKey: Uint8Array) {
-  const timestamp = Date.now();
-  const encoder = new TextEncoder();
-
-  const message = `${String(timestamp)}GET/v1/client/holding`;
-  const orderlySignature = await signAsync(encoder.encode(message), privateKey);
-
-  const res = await fetch(`${BASE_URL}/v1/client/holding`, {
-    headers: {
-      'orderly-timestamp': String(timestamp),
-      'orderly-account-id': orderlyAccountId,
-      'orderly-key': `ed25519:${encodeBase58(await getPublicKeyAsync(privateKey))}`,
-      'orderly-signature': Buffer.from(orderlySignature).toString('base64url')
-    }
-  });
+export async function getClientHolding(orderlyAccountId: string, orderlyKey: Uint8Array) {
+  const res = await signAndSendRequest(
+    orderlyAccountId,
+    orderlyKey,
+    `${BASE_URL}/v1/client/holding`
+  );
   const json = await res.json();
-  console.log('getClientHolding:', json);
+  console.log('getClientHolding:', JSON.stringify(json, undefined, 2));
+}
+
+export async function getOpenOrders(
+  orderlyAccountId: string,
+  orderlyKey: Uint8Array
+): Promise<API.Order[]> {
+  const res = await signAndSendRequest(
+    orderlyAccountId,
+    orderlyKey,
+    `${BASE_URL}/v1/orders?status=INCOMPLETE`
+  );
+  const json = await res.json();
+  console.log('getOpenOrders:', JSON.stringify(json, undefined, 2));
+  return json.data.rows;
+}
+
+export async function getOpenAlgoOrders(
+  algoType: 'STOP' | 'TP_SL' | 'POSITIONAL_TP_SL',
+  orderlyAccountId: string,
+  orderlyKey: Uint8Array
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<{ algo_order_id: string; symbol: string; algo_status: string }[]> {
+  const res = await signAndSendRequest(
+    orderlyAccountId,
+    orderlyKey,
+    `${BASE_URL}/v1/algo/orders?status=INCOMPLETE&algo_type=${algoType}`
+  );
+  const json = await res.json();
+  console.log('getOpenAlgoOrders:', JSON.stringify(json, undefined, 2));
+  return json.data.rows;
 }

@@ -43,7 +43,7 @@ export async function registerAccount(wallet: ethers.Wallet): Promise<string> {
     })
   });
   const registerJson = await registerRes.json();
-  console.log('registerAccount', registerJson);
+  console.log('registerAccount', JSON.stringify(registerJson, undefined, 2));
   if (!registerJson.success) {
     throw new Error(registerJson.message);
   }
