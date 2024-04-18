@@ -3,7 +3,9 @@
 This project demonstrates usage of the [Orderly hooks SDK](https://www.npmjs.com/package/@orderly.network/hooks).
 The project has been scaffolded via Vitejs and the `react-ts` template.
 
-[Demo page](https://orderlynetwork.github.io/sdk-workshop/)
+[Demo page](https://orderlynetwork.github.io/examples/)
+
+There's also a new and more feature complete example for a [full DEX](https://github.com/OrderlyNetwork/example-dex).
 
 ## Usage
 
