@@ -1,9 +1,10 @@
 package org.web3j;
 
-import java.security.spec.PKCS8EncodedKeySpec;
-
 import io.github.cdimascio.dotenv.Dotenv;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;
+import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;
+import net.i2p.crypto.eddsa.spec.EdDSAParameterSpec;
+import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -20,7 +21,8 @@ public class AuthenticationExample {
       OkHttpClient client = new OkHttpClient();
 
       String key = dotenv.get("ORDERLY_SECRET");
-      PKCS8EncodedKeySpec encoded = new PKCS8EncodedKeySpec(Base58.decode(key));
+      EdDSAParameterSpec spec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519);
+      EdDSAPrivateKeySpec encoded = new EdDSAPrivateKeySpec(Base58.decode(key), spec);
       EdDSAPrivateKey orderlyKey = new EdDSAPrivateKey(encoded);
 
       Signer signer = new Signer(baseUrl, orderlyAccountId, orderlyKey);
