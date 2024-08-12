@@ -1,3 +1,7 @@
+**DEPRECATED**
+
+*This example has been deprecated. Please check out the [extended hooks SDK example](https://github.com/OrderlyNetwork/example-dex)*
+
 # Orderly SDK Workshop
 
 This project demonstrates usage of the [Orderly hooks SDK](https://www.npmjs.com/package/@orderly.network/hooks).
