@@ -1,20 +1,19 @@
 import { config } from 'dotenv';
-import { ethers, keccak256 } from 'ethers';
+import { AbiCoder, ethers, keccak256, solidityPackedKeccak256 } from 'ethers';
 
 import { Vault__factory, NativeUSDC__factory } from './abi';
 import type { VaultTypes } from './abi/Vault';
 
 const brokerId = 'woofi_pro';
 const tokenId = 'USDC';
-const orderlyAccountId = '0x...';
 
-const usdcAddress = '0xfd064a18f3bf249cf1f87fc203e90d8f650f2d63';
-const vaultAddress = '0x0c554ddb6a9010ed1fd7e50d92559a06655da482';
+const usdcAddress = '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d';
+const vaultAddress = '0x0EaC556c0C2321BA25b9DC01e4e3c95aD5CDCd2f';
 
 config();
 
 async function deposit(): Promise<void> {
-  const provider = new ethers.JsonRpcProvider('https://arbitrum-goerli.publicnode.com');
+  const provider = new ethers.JsonRpcProvider('https://arbitrum-sepolia.publicnode.com');
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, provider);
 
   const usdcContract = NativeUSDC__factory.connect(usdcAddress, wallet);
@@ -23,6 +22,8 @@ async function deposit(): Promise<void> {
   await usdcContract.approve(vaultAddress, depositAmount);
 
   const vaultContract = Vault__factory.connect(vaultAddress, wallet);
+
+  const orderlyAccountId = getAccountId(wallet.address, brokerId);
 
   const encoder = new TextEncoder();
   const depositInput = {
@@ -37,6 +38,16 @@ async function deposit(): Promise<void> {
 
   // deposit USDC into Vault contract
   await vaultContract.deposit(depositInput, { value: depositFee });
+}
+
+export function getAccountId(address: string, brokerId: string) {
+  const abicoder = AbiCoder.defaultAbiCoder();
+  return keccak256(
+    abicoder.encode(
+      ['address', 'bytes32'],
+      [address, solidityPackedKeccak256(['string'], [brokerId])]
+    )
+  );
 }
 
 deposit();

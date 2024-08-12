@@ -10,12 +10,12 @@ broker_id = "woofi_pro"
 token_id = "USDC"
 orderly_account_id = "0x..."
 
-usdc_address = Web3.to_checksum_address("0xfd064a18f3bf249cf1f87fc203e90d8f650f2d63")
-vault_address = Web3.to_checksum_address("0x0c554ddb6a9010ed1fd7e50d92559a06655da482")
+usdc_address = Web3.to_checksum_address("0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d")
+vault_address = Web3.to_checksum_address("0x0EaC556c0C2321BA25b9DC01e4e3c95aD5CDCd2f")
 
 account: Account = Account.from_key(os.environ.get("PRIVATE_KEY"))
 
-w3 = Web3(Web3.HTTPProvider("https://arbitrum-goerli.publicnode.com"))
+w3 = Web3(Web3.HTTPProvider("https://arbitrum-sepolia.publicnode.com"))
 w3.middleware_onion.add(construct_sign_and_send_raw_middleware(account))
 
 with open("./src/abi/NativeUSDC.json") as f:
