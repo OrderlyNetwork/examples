@@ -29,7 +29,7 @@ public class DepositExample {
 
             NativeUSDC USDC = new NativeUSDC(usdcAddress, web3j, credentials, gasProvider);
 
-            BigInteger depositAmount = new BigInteger("100000");
+            BigInteger depositAmount = new BigInteger("10000000");
 
             // approve USDC ERC-20 to be transferred to Vault contract
             USDC.approve(vaultAddress, depositAmount).send();
@@ -51,7 +51,7 @@ public class DepositExample {
                         depositAmount);
 
             // get wei deposit fee for `deposit` call
-            BigInteger depositFee = vault.getDepositFee(vaultAddress, depositInput).send();
+            BigInteger depositFee = vault.getDepositFee(credentials.getAddress(), depositInput).send();
 
             // deposit USDC into Vault contract
             vault.deposit(

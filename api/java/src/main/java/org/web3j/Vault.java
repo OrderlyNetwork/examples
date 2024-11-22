@@ -55,6 +55,8 @@ public class Vault extends Contract {
 
     public static final String FUNC_CROSSCHAINMANAGERADDRESS = "crossChainManagerAddress";
 
+    public static final String FUNC_DELEGATESIGNER = "delegateSigner";
+
     public static final String FUNC_DEPOSIT = "deposit";
 
     public static final String FUNC_DEPOSITFEEENABLED = "depositFeeEnabled";
@@ -109,6 +111,10 @@ public class Vault extends Contract {
 
     public static final String FUNC_WITHDRAW = "withdraw";
 
+    public static final Event ACCOUNTDELEGATE_EVENT = new Event("AccountDelegate", 
+            Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Bytes32>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
+    ;
+
     public static final Event ACCOUNTDEPOSIT_EVENT = new Event("AccountDeposit", 
             Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Uint64>(true) {}, new TypeReference<Bytes32>() {}, new TypeReference<Uint128>() {}));
     ;
@@ -153,6 +159,10 @@ public class Vault extends Contract {
             Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
     ;
 
+    public static final Event WITHDRAWFAILED_EVENT = new Event("WithdrawFailed", 
+            Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Uint256>() {}));
+    ;
+
     @Deprecated
     protected Vault(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
         super(BINARY, contractAddress, web3j, credentials, gasPrice, gasLimit);
@@ -169,6 +179,44 @@ public class Vault extends Contract {
 
     protected Vault(String contractAddress, Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider) {
         super(BINARY, contractAddress, web3j, transactionManager, contractGasProvider);
+    }
+
+    public static List<AccountDelegateEventResponse> getAccountDelegateEvents(TransactionReceipt transactionReceipt) {
+        List<Contract.EventValuesWithLog> valueList = staticExtractEventParametersWithLog(ACCOUNTDELEGATE_EVENT, transactionReceipt);
+        ArrayList<AccountDelegateEventResponse> responses = new ArrayList<AccountDelegateEventResponse>(valueList.size());
+        for (Contract.EventValuesWithLog eventValues : valueList) {
+            AccountDelegateEventResponse typedResponse = new AccountDelegateEventResponse();
+            typedResponse.log = eventValues.getLog();
+            typedResponse.delegateContract = (String) eventValues.getIndexedValues().get(0).getValue();
+            typedResponse.brokerHash = (byte[]) eventValues.getIndexedValues().get(1).getValue();
+            typedResponse.delegateSigner = (String) eventValues.getIndexedValues().get(2).getValue();
+            typedResponse.chainId = (BigInteger) eventValues.getNonIndexedValues().get(0).getValue();
+            typedResponse.blockNumber = (BigInteger) eventValues.getNonIndexedValues().get(1).getValue();
+            responses.add(typedResponse);
+        }
+        return responses;
+    }
+
+    public static AccountDelegateEventResponse getAccountDelegateEventFromLog(Log log) {
+        Contract.EventValuesWithLog eventValues = staticExtractEventParametersWithLog(ACCOUNTDELEGATE_EVENT, log);
+        AccountDelegateEventResponse typedResponse = new AccountDelegateEventResponse();
+        typedResponse.log = log;
+        typedResponse.delegateContract = (String) eventValues.getIndexedValues().get(0).getValue();
+        typedResponse.brokerHash = (byte[]) eventValues.getIndexedValues().get(1).getValue();
+        typedResponse.delegateSigner = (String) eventValues.getIndexedValues().get(2).getValue();
+        typedResponse.chainId = (BigInteger) eventValues.getNonIndexedValues().get(0).getValue();
+        typedResponse.blockNumber = (BigInteger) eventValues.getNonIndexedValues().get(1).getValue();
+        return typedResponse;
+    }
+
+    public Flowable<AccountDelegateEventResponse> accountDelegateEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(log -> getAccountDelegateEventFromLog(log));
+    }
+
+    public Flowable<AccountDelegateEventResponse> accountDelegateEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
+        EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
+        filter.addSingleTopic(EventEncoder.encode(ACCOUNTDELEGATE_EVENT));
+        return accountDelegateEventFlowable(filter);
     }
 
     public static List<AccountDepositEventResponse> getAccountDepositEvents(TransactionReceipt transactionReceipt) {
@@ -541,6 +589,40 @@ public class Vault extends Contract {
         return unpausedEventFlowable(filter);
     }
 
+    public static List<WithdrawFailedEventResponse> getWithdrawFailedEvents(TransactionReceipt transactionReceipt) {
+        List<Contract.EventValuesWithLog> valueList = staticExtractEventParametersWithLog(WITHDRAWFAILED_EVENT, transactionReceipt);
+        ArrayList<WithdrawFailedEventResponse> responses = new ArrayList<WithdrawFailedEventResponse>(valueList.size());
+        for (Contract.EventValuesWithLog eventValues : valueList) {
+            WithdrawFailedEventResponse typedResponse = new WithdrawFailedEventResponse();
+            typedResponse.log = eventValues.getLog();
+            typedResponse.token = (String) eventValues.getIndexedValues().get(0).getValue();
+            typedResponse.receiver = (String) eventValues.getIndexedValues().get(1).getValue();
+            typedResponse.amount = (BigInteger) eventValues.getNonIndexedValues().get(0).getValue();
+            responses.add(typedResponse);
+        }
+        return responses;
+    }
+
+    public static WithdrawFailedEventResponse getWithdrawFailedEventFromLog(Log log) {
+        Contract.EventValuesWithLog eventValues = staticExtractEventParametersWithLog(WITHDRAWFAILED_EVENT, log);
+        WithdrawFailedEventResponse typedResponse = new WithdrawFailedEventResponse();
+        typedResponse.log = log;
+        typedResponse.token = (String) eventValues.getIndexedValues().get(0).getValue();
+        typedResponse.receiver = (String) eventValues.getIndexedValues().get(1).getValue();
+        typedResponse.amount = (BigInteger) eventValues.getNonIndexedValues().get(0).getValue();
+        return typedResponse;
+    }
+
+    public Flowable<WithdrawFailedEventResponse> withdrawFailedEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(log -> getWithdrawFailedEventFromLog(log));
+    }
+
+    public Flowable<WithdrawFailedEventResponse> withdrawFailedEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
+        EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
+        filter.addSingleTopic(EventEncoder.encode(WITHDRAWFAILED_EVENT));
+        return withdrawFailedEventFlowable(filter);
+    }
+
     public RemoteFunctionCall<String> allowedToken(byte[] param0) {
         final Function function = new Function(FUNC_ALLOWEDTOKEN, 
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(param0)), 
@@ -562,6 +644,14 @@ public class Vault extends Contract {
                 Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> delegateSigner(VaultDelegate data) {
+        final Function function = new Function(
+                FUNC_DELEGATESIGNER, 
+                Arrays.<Type>asList(data), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
     }
 
     public RemoteFunctionCall<TransactionReceipt> deposit(VaultDepositFE data, BigInteger weiValue) {
@@ -807,6 +897,25 @@ public class Vault extends Contract {
         return new Vault(contractAddress, web3j, transactionManager, contractGasProvider);
     }
 
+    public static class VaultDelegate extends StaticStruct {
+        public byte[] brokerHash;
+
+        public String delegateSigner;
+
+        public VaultDelegate(byte[] brokerHash, String delegateSigner) {
+            super(new org.web3j.abi.datatypes.generated.Bytes32(brokerHash), 
+                    new org.web3j.abi.datatypes.Address(160, delegateSigner));
+            this.brokerHash = brokerHash;
+            this.delegateSigner = delegateSigner;
+        }
+
+        public VaultDelegate(Bytes32 brokerHash, Address delegateSigner) {
+            super(brokerHash, delegateSigner);
+            this.brokerHash = brokerHash.getValue();
+            this.delegateSigner = delegateSigner.getValue();
+        }
+    }
+
     public static class VaultDepositFE extends StaticStruct {
         public byte[] accountId;
 
@@ -845,37 +954,37 @@ public class Vault extends Contract {
 
         public byte[] tokenHash;
 
-        public BigInteger srcChainId;
+        public BigInteger burnChainId;
 
-        public BigInteger dstChainId;
+        public BigInteger mintChainId;
 
         public String dstVaultAddress;
 
-        public RebalanceBurnCCData(BigInteger dstDomain, BigInteger rebalanceId, BigInteger amount, byte[] tokenHash, BigInteger srcChainId, BigInteger dstChainId, String dstVaultAddress) {
+        public RebalanceBurnCCData(BigInteger dstDomain, BigInteger rebalanceId, BigInteger amount, byte[] tokenHash, BigInteger burnChainId, BigInteger mintChainId, String dstVaultAddress) {
             super(new org.web3j.abi.datatypes.generated.Uint32(dstDomain), 
                     new org.web3j.abi.datatypes.generated.Uint64(rebalanceId), 
                     new org.web3j.abi.datatypes.generated.Uint128(amount), 
                     new org.web3j.abi.datatypes.generated.Bytes32(tokenHash), 
-                    new org.web3j.abi.datatypes.generated.Uint256(srcChainId), 
-                    new org.web3j.abi.datatypes.generated.Uint256(dstChainId), 
+                    new org.web3j.abi.datatypes.generated.Uint256(burnChainId), 
+                    new org.web3j.abi.datatypes.generated.Uint256(mintChainId), 
                     new org.web3j.abi.datatypes.Address(160, dstVaultAddress));
             this.dstDomain = dstDomain;
             this.rebalanceId = rebalanceId;
             this.amount = amount;
             this.tokenHash = tokenHash;
-            this.srcChainId = srcChainId;
-            this.dstChainId = dstChainId;
+            this.burnChainId = burnChainId;
+            this.mintChainId = mintChainId;
             this.dstVaultAddress = dstVaultAddress;
         }
 
-        public RebalanceBurnCCData(Uint32 dstDomain, Uint64 rebalanceId, Uint128 amount, Bytes32 tokenHash, Uint256 srcChainId, Uint256 dstChainId, Address dstVaultAddress) {
-            super(dstDomain, rebalanceId, amount, tokenHash, srcChainId, dstChainId, dstVaultAddress);
+        public RebalanceBurnCCData(Uint32 dstDomain, Uint64 rebalanceId, Uint128 amount, Bytes32 tokenHash, Uint256 burnChainId, Uint256 mintChainId, Address dstVaultAddress) {
+            super(dstDomain, rebalanceId, amount, tokenHash, burnChainId, mintChainId, dstVaultAddress);
             this.dstDomain = dstDomain.getValue();
             this.rebalanceId = rebalanceId.getValue();
             this.amount = amount.getValue();
             this.tokenHash = tokenHash.getValue();
-            this.srcChainId = srcChainId.getValue();
-            this.dstChainId = dstChainId.getValue();
+            this.burnChainId = burnChainId.getValue();
+            this.mintChainId = mintChainId.getValue();
             this.dstVaultAddress = dstVaultAddress.getValue();
         }
     }
@@ -887,38 +996,38 @@ public class Vault extends Contract {
 
         public byte[] tokenHash;
 
-        public BigInteger srcChainId;
+        public BigInteger burnChainId;
 
-        public BigInteger dstChainId;
+        public BigInteger mintChainId;
 
         public byte[] messageBytes;
 
         public byte[] messageSignature;
 
-        public RebalanceMintCCData(BigInteger rebalanceId, BigInteger amount, byte[] tokenHash, BigInteger srcChainId, BigInteger dstChainId, byte[] messageBytes, byte[] messageSignature) {
+        public RebalanceMintCCData(BigInteger rebalanceId, BigInteger amount, byte[] tokenHash, BigInteger burnChainId, BigInteger mintChainId, byte[] messageBytes, byte[] messageSignature) {
             super(new org.web3j.abi.datatypes.generated.Uint64(rebalanceId), 
                     new org.web3j.abi.datatypes.generated.Uint128(amount), 
                     new org.web3j.abi.datatypes.generated.Bytes32(tokenHash), 
-                    new org.web3j.abi.datatypes.generated.Uint256(srcChainId), 
-                    new org.web3j.abi.datatypes.generated.Uint256(dstChainId), 
+                    new org.web3j.abi.datatypes.generated.Uint256(burnChainId), 
+                    new org.web3j.abi.datatypes.generated.Uint256(mintChainId), 
                     new org.web3j.abi.datatypes.DynamicBytes(messageBytes), 
                     new org.web3j.abi.datatypes.DynamicBytes(messageSignature));
             this.rebalanceId = rebalanceId;
             this.amount = amount;
             this.tokenHash = tokenHash;
-            this.srcChainId = srcChainId;
-            this.dstChainId = dstChainId;
+            this.burnChainId = burnChainId;
+            this.mintChainId = mintChainId;
             this.messageBytes = messageBytes;
             this.messageSignature = messageSignature;
         }
 
-        public RebalanceMintCCData(Uint64 rebalanceId, Uint128 amount, Bytes32 tokenHash, Uint256 srcChainId, Uint256 dstChainId, DynamicBytes messageBytes, DynamicBytes messageSignature) {
-            super(rebalanceId, amount, tokenHash, srcChainId, dstChainId, messageBytes, messageSignature);
+        public RebalanceMintCCData(Uint64 rebalanceId, Uint128 amount, Bytes32 tokenHash, Uint256 burnChainId, Uint256 mintChainId, DynamicBytes messageBytes, DynamicBytes messageSignature) {
+            super(rebalanceId, amount, tokenHash, burnChainId, mintChainId, messageBytes, messageSignature);
             this.rebalanceId = rebalanceId.getValue();
             this.amount = amount.getValue();
             this.tokenHash = tokenHash.getValue();
-            this.srcChainId = srcChainId.getValue();
-            this.dstChainId = dstChainId.getValue();
+            this.burnChainId = burnChainId.getValue();
+            this.mintChainId = mintChainId.getValue();
             this.messageBytes = messageBytes.getValue();
             this.messageSignature = messageSignature.getValue();
         }
@@ -971,6 +1080,18 @@ public class Vault extends Contract {
             this.receiver = receiver.getValue();
             this.withdrawNonce = withdrawNonce.getValue();
         }
+    }
+
+    public static class AccountDelegateEventResponse extends BaseEventResponse {
+        public String delegateContract;
+
+        public byte[] brokerHash;
+
+        public String delegateSigner;
+
+        public BigInteger chainId;
+
+        public BigInteger blockNumber;
     }
 
     public static class AccountDepositEventResponse extends BaseEventResponse {
@@ -1055,5 +1176,13 @@ public class Vault extends Contract {
 
     public static class UnpausedEventResponse extends BaseEventResponse {
         public String account;
+    }
+
+    public static class WithdrawFailedEventResponse extends BaseEventResponse {
+        public String token;
+
+        public String receiver;
+
+        public BigInteger amount;
     }
 }

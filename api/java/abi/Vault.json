@@ -1,59 +1,59 @@
 [
-  {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "inputs": [],
-    "name": "AccountIdInvalid",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "AddressZero",
-    "type": "error"
-  },
+  { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+  { "inputs": [], "name": "AccountIdInvalid", "type": "error" },
+  { "inputs": [], "name": "AddressZero", "type": "error" },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "balance",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint128",
-        "name": "amount",
-        "type": "uint128"
-      }
+      { "internalType": "uint256", "name": "balance", "type": "uint256" },
+      { "internalType": "uint128", "name": "amount", "type": "uint128" }
     ],
     "name": "BalanceNotEnough",
     "type": "error"
   },
+  { "inputs": [], "name": "BrokerNotAllowed", "type": "error" },
+  { "inputs": [], "name": "EnumerableSetError", "type": "error" },
+  { "inputs": [], "name": "NotZeroCodeLength", "type": "error" },
+  { "inputs": [], "name": "OnlyCrossChainManagerCanCall", "type": "error" },
+  { "inputs": [], "name": "TokenNotAllowed", "type": "error" },
+  { "inputs": [], "name": "ZeroCodeLength", "type": "error" },
+  { "inputs": [], "name": "ZeroDeposit", "type": "error" },
+  { "inputs": [], "name": "ZeroDepositFee", "type": "error" },
   {
-    "inputs": [],
-    "name": "BrokerNotAllowed",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "EnumerableSetError",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "OnlyCrossChainManagerCanCall",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "TokenNotAllowed",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ZeroDepositFee",
-    "type": "error"
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "delegateContract",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "brokerHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "delegateSigner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "chainId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "blockNumber",
+        "type": "uint256"
+      }
+    ],
+    "name": "AccountDelegate",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -319,36 +319,41 @@
     "type": "event"
   },
   {
+    "anonymous": false,
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "name": "allowedToken",
-    "outputs": [
-      {
+        "indexed": true,
         "internalType": "address",
-        "name": "",
+        "name": "token",
         "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "receiver",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
       }
     ],
+    "name": "WithdrawFailed",
+    "type": "event"
+  },
+  {
+    "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "name": "allowedToken",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_tokenHash",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      }
+      { "internalType": "bytes32", "name": "_tokenHash", "type": "bytes32" },
+      { "internalType": "address", "name": "_tokenAddress", "type": "address" }
     ],
     "name": "changeTokenAddressAndAllow",
     "outputs": [],
@@ -358,13 +363,7 @@
   {
     "inputs": [],
     "name": "crossChainManagerAddress",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -374,19 +373,36 @@
         "components": [
           {
             "internalType": "bytes32",
-            "name": "accountId",
+            "name": "brokerHash",
             "type": "bytes32"
           },
+          {
+            "internalType": "address",
+            "name": "delegateSigner",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct VaultTypes.VaultDelegate",
+        "name": "data",
+        "type": "tuple"
+      }
+    ],
+    "name": "delegateSigner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          { "internalType": "bytes32", "name": "accountId", "type": "bytes32" },
           {
             "internalType": "bytes32",
             "name": "brokerHash",
             "type": "bytes32"
           },
-          {
-            "internalType": "bytes32",
-            "name": "tokenHash",
-            "type": "bytes32"
-          },
+          { "internalType": "bytes32", "name": "tokenHash", "type": "bytes32" },
           {
             "internalType": "uint128",
             "name": "tokenAmount",
@@ -406,53 +422,29 @@
   {
     "inputs": [],
     "name": "depositFeeEnabled",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "depositId",
-    "outputs": [
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
-      }
-    ],
+    "outputs": [{ "internalType": "uint64", "name": "", "type": "uint64" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
+      { "internalType": "address", "name": "receiver", "type": "address" },
       {
         "components": [
-          {
-            "internalType": "bytes32",
-            "name": "accountId",
-            "type": "bytes32"
-          },
+          { "internalType": "bytes32", "name": "accountId", "type": "bytes32" },
           {
             "internalType": "bytes32",
             "name": "brokerHash",
             "type": "bytes32"
           },
-          {
-            "internalType": "bytes32",
-            "name": "tokenHash",
-            "type": "bytes32"
-          },
+          { "internalType": "bytes32", "name": "tokenHash", "type": "bytes32" },
           {
             "internalType": "uint128",
             "name": "tokenAmount",
@@ -484,13 +476,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "_enabled",
-        "type": "bool"
-      }
-    ],
+    "inputs": [{ "internalType": "bool", "name": "_enabled", "type": "bool" }],
     "name": "enableDepositFee",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -500,11 +486,7 @@
     "inputs": [],
     "name": "getAllAllowedBroker",
     "outputs": [
-      {
-        "internalType": "bytes32[]",
-        "name": "",
-        "type": "bytes32[]"
-      }
+      { "internalType": "bytes32[]", "name": "", "type": "bytes32[]" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -513,77 +495,41 @@
     "inputs": [],
     "name": "getAllAllowedToken",
     "outputs": [
-      {
-        "internalType": "bytes32[]",
-        "name": "",
-        "type": "bytes32[]"
-      }
+      { "internalType": "bytes32[]", "name": "", "type": "bytes32[]" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_brokerHash",
-        "type": "bytes32"
-      }
+      { "internalType": "bytes32", "name": "_brokerHash", "type": "bytes32" }
     ],
     "name": "getAllowedBroker",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_tokenHash",
-        "type": "bytes32"
-      }
+      { "internalType": "bytes32", "name": "_tokenHash", "type": "bytes32" }
     ],
     "name": "getAllowedToken",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
+      { "internalType": "address", "name": "receiver", "type": "address" },
       {
         "components": [
-          {
-            "internalType": "bytes32",
-            "name": "accountId",
-            "type": "bytes32"
-          },
+          { "internalType": "bytes32", "name": "accountId", "type": "bytes32" },
           {
             "internalType": "bytes32",
             "name": "brokerHash",
             "type": "bytes32"
           },
-          {
-            "internalType": "bytes32",
-            "name": "tokenHash",
-            "type": "bytes32"
-          },
+          { "internalType": "bytes32", "name": "tokenHash", "type": "bytes32" },
           {
             "internalType": "uint128",
             "name": "tokenAmount",
@@ -596,13 +542,7 @@
       }
     ],
     "name": "getDepositFee",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -616,39 +556,21 @@
   {
     "inputs": [],
     "name": "messageTransmitterContract",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "paused",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -656,34 +578,18 @@
     "inputs": [
       {
         "components": [
-          {
-            "internalType": "uint32",
-            "name": "dstDomain",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint64",
-            "name": "rebalanceId",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint128",
-            "name": "amount",
-            "type": "uint128"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "tokenHash",
-            "type": "bytes32"
-          },
+          { "internalType": "uint32", "name": "dstDomain", "type": "uint32" },
+          { "internalType": "uint64", "name": "rebalanceId", "type": "uint64" },
+          { "internalType": "uint128", "name": "amount", "type": "uint128" },
+          { "internalType": "bytes32", "name": "tokenHash", "type": "bytes32" },
           {
             "internalType": "uint256",
-            "name": "srcChainId",
+            "name": "burnChainId",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "dstChainId",
+            "name": "mintChainId",
             "type": "uint256"
           },
           {
@@ -706,36 +612,20 @@
     "inputs": [
       {
         "components": [
-          {
-            "internalType": "uint64",
-            "name": "rebalanceId",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint128",
-            "name": "amount",
-            "type": "uint128"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "tokenHash",
-            "type": "bytes32"
-          },
+          { "internalType": "uint64", "name": "rebalanceId", "type": "uint64" },
+          { "internalType": "uint128", "name": "amount", "type": "uint128" },
+          { "internalType": "bytes32", "name": "tokenHash", "type": "bytes32" },
           {
             "internalType": "uint256",
-            "name": "srcChainId",
+            "name": "burnChainId",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "dstChainId",
+            "name": "mintChainId",
             "type": "uint256"
           },
-          {
-            "internalType": "bytes",
-            "name": "messageBytes",
-            "type": "bytes"
-          },
+          { "internalType": "bytes", "name": "messageBytes", "type": "bytes" },
           {
             "internalType": "bytes",
             "name": "messageSignature",
@@ -761,16 +651,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_brokerHash",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bool",
-        "name": "_allowed",
-        "type": "bool"
-      }
+      { "internalType": "bytes32", "name": "_brokerHash", "type": "bytes32" },
+      { "internalType": "bool", "name": "_allowed", "type": "bool" }
     ],
     "name": "setAllowedBroker",
     "outputs": [],
@@ -779,16 +661,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_tokenHash",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bool",
-        "name": "_allowed",
-        "type": "bool"
-      }
+      { "internalType": "bytes32", "name": "_tokenHash", "type": "bytes32" },
+      { "internalType": "bool", "name": "_allowed", "type": "bool" }
     ],
     "name": "setAllowedToken",
     "outputs": [],
@@ -837,23 +711,13 @@
   {
     "inputs": [],
     "name": "tokenMessengerContract",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "newOwner", "type": "address" }
     ],
     "name": "transferOwnership",
     "outputs": [],
@@ -864,41 +728,21 @@
     "inputs": [
       {
         "components": [
-          {
-            "internalType": "bytes32",
-            "name": "accountId",
-            "type": "bytes32"
-          },
+          { "internalType": "bytes32", "name": "accountId", "type": "bytes32" },
           {
             "internalType": "bytes32",
             "name": "brokerHash",
             "type": "bytes32"
           },
-          {
-            "internalType": "bytes32",
-            "name": "tokenHash",
-            "type": "bytes32"
-          },
+          { "internalType": "bytes32", "name": "tokenHash", "type": "bytes32" },
           {
             "internalType": "uint128",
             "name": "tokenAmount",
             "type": "uint128"
           },
-          {
-            "internalType": "uint128",
-            "name": "fee",
-            "type": "uint128"
-          },
-          {
-            "internalType": "address",
-            "name": "sender",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "receiver",
-            "type": "address"
-          },
+          { "internalType": "uint128", "name": "fee", "type": "uint128" },
+          { "internalType": "address", "name": "sender", "type": "address" },
+          { "internalType": "address", "name": "receiver", "type": "address" },
           {
             "internalType": "uint64",
             "name": "withdrawNonce",
