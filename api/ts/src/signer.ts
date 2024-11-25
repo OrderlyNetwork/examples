@@ -1,5 +1,8 @@
-import { getPublicKeyAsync, signAsync } from '@noble/ed25519';
 import { encodeBase58 } from 'ethers';
+import { ed25519 } from '@noble/curves/ed25519'
+import {config } from 'dotenv'
+
+config();
 
 export async function signAndSendRequest(
   orderlyAccountId: string,
@@ -15,7 +18,7 @@ export async function signAndSendRequest(
   if (init?.body) {
     message += init.body;
   }
-  const orderlySignature = await signAsync(encoder.encode(message), privateKey);
+  const orderlySignature = await ed25519.sign(encoder.encode(message), privateKey);
 
   return fetch(input, {
     headers: {
@@ -25,7 +28,7 @@ export async function signAndSendRequest(
           : 'application/x-www-form-urlencoded',
       'orderly-timestamp': String(timestamp),
       'orderly-account-id': orderlyAccountId,
-      'orderly-key': `ed25519:${encodeBase58(await getPublicKeyAsync(privateKey))}`,
+      'orderly-key': process.env.ORDERLY_KEY,
       'orderly-signature': Buffer.from(orderlySignature).toString('base64url'),
       ...(init?.headers ?? {})
     },
